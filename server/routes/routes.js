@@ -19,6 +19,11 @@ router.get(
     VehicleController.verify,
 )
 
+router.post(
+    '/api/vehicle/verifyVehicle',
+    VehicleController.verifyVehicle
+)
+
 // -> /*
 router.get(
     '/*',
