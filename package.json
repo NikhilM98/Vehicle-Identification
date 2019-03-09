@@ -1,0 +1,11 @@
+{
+  "name": "vehicle-identification",
+  "version": "1.0.0",
+  "description": "Hackathon project. Use camera to identify if a vehicle exists in DB or not.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nikhil Mehra",
+  "license": "ISC"
+}
