@@ -69,21 +69,48 @@ class WebIndex extends Component {
             // .catch(err => {
             //     console.log(err)
             // })
-            axios({
-                method: "Post",
-                url: "https://platerecognizer.com/api/plate-reader/",
-                data: uploadData.image,
-                headers: {
-                    'Authorization': "34be0144b537bd895578486e45fa7d354a7c2ded" 
-                },
-                responseType: 'json'
-            })
-            .then(res => {
-                console.log(res.data)
-            })
-            .catch(err => {
-                console.log(err)
-            })
+            // fetch("https://platerecognizer.com/api/plate-reader/", {
+            //     method: 'POST',
+            //     headers: {
+            //         "Authorization": "34be0144b537bd895578486e45fa7d354a7c2ded"
+            //     },
+            //     body: uploadData.image
+            // }).then(res => res.json())
+            // .then(json => console.log(json))
+            // .catch((err) => {
+            //     console.log(err);
+            // });
+
+            // Open connection to api.openalpr.com
+            var secret_key = "sk_4e601d2372daae0efe473ce9";
+            var url = "https://api.openalpr.com/v2/recognize_bytes?recognize_vehicle=1&country=in&secret_key=" + secret_key;
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", url);
+
+            // Send POST data and display response
+            xhr.send(uploadData.image);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    console.log(xhr.responseText);
+                } else {
+                    console.log("Waiting on response...");
+                }
+            }
+            // axios({
+            //     method: "Post",
+            //     url: "https://platerecognizer.com/api/plate-reader/",
+            //     data: uploadData.image,
+            //     headers: {
+            //         'Authorization': "34be0144b537bd895578486e45fa7d354a7c2ded" 
+            //     },
+            //     responseType: 'json'
+            // })
+            // .then(res => {
+            //     console.log(res.data)
+            // })
+            // .catch(err => {
+            //     console.log(err)
+            // })
     }
 
     render() {
