@@ -4,7 +4,8 @@ var UserSchema = new mongoose.Schema({
     number: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        uppercase: true
     },
     updated_date: {
         type: Date,

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import FetchApi from '../../utils/FetchAPI'
 import axios from 'axios'
 
 class WebIndex extends Component {
@@ -7,7 +8,8 @@ class WebIndex extends Component {
 
         this.state = {
             constraints: { audio: false, video: { width: 400, height: 300 } },
-            msg: null
+            msg: null,
+            image:''
         }
     }
     componentDidMount() {
@@ -51,66 +53,43 @@ class WebIndex extends Component {
             format
         }
         console.log(uploadData,'data')
-        // axios
-        //     .post("https://platerecognizer.com/api/plate-reader/", 
-        //          { headers: 
-        //             { 'Authorization': "Token 34be0144b537bd895578486e45fa7d354a7c2ded" }
-        //          }, 
-        //          {
-        //              data: {
-        //                  image: uploadData.image
-        //              }
-
-        //          }
-        //     )
-            // .then(res => {
-            //     console.log(res.data)
-            // })
-            // .catch(err => {
-            //     console.log(err)
-            // })
-            // fetch("https://platerecognizer.com/api/plate-reader/", {
-            //     method: 'POST',
-            //     headers: {
-            //         "Authorization": "34be0144b537bd895578486e45fa7d354a7c2ded"
-            //     },
-            //     body: uploadData.image
-            // }).then(res => res.json())
-            // .then(json => console.log(json))
-            // .catch((err) => {
-            //     console.log(err);
-            // });
-
-            // Open connection to api.openalpr.com
-            var secret_key = "sk_4e601d2372daae0efe473ce9";
-            var url = "https://api.openalpr.com/v2/recognize_bytes?recognize_vehicle=1&country=in&secret_key=" + secret_key;
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", url);
-
-            // Send POST data and display response
-            xhr.send(uploadData.image);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4) {
-                    console.log(xhr.responseText);
-                } else {
-                    console.log("Waiting on response...");
+        this.setState({
+            image: uploadData.image
+        })
+        axios({
+            method: "Post",
+            url: "https://api.openalpr.com/v2/recognize_bytes?recognize_vehicle=1&country=us&secret_key=sk_4e601d2372daae0efe473ce9",
+            data: uploadData.image.substring(22),
+            responseType: 'json'
+        })
+            .then(res => {
+                if(res.data.results.length>0){
+                    console.log(res.data.results[0].plate)
+                    const data = {
+                        number: res.data.results[0].plate
+                    }
+                    FetchApi('post', '/api/vehicle/verifyVehicle', data)
+                        .then(r => {
+                            if(r && r.data && r.data.body) {
+                                console.log(r.data.body)
+                                console.log("success")
+                                alert("Vehicle number found in the database")
+                            }
+                            else {
+                                console.log("Vehicle not found")
+                            }
+                        })
+                        .catch(err => {
+                            console.log("Something went wrong")
+                        })
                 }
-            }
-            // axios({
-            //     method: "Post",
-            //     url: "https://platerecognizer.com/api/plate-reader/",
-            //     data: uploadData.image,
-            //     headers: {
-            //         'Authorization': "34be0144b537bd895578486e45fa7d354a7c2ded" 
-            //     },
-            //     responseType: 'json'
-            // })
-            // .then(res => {
-            //     console.log(res.data)
-            // })
-            // .catch(err => {
-            //     console.log(err)
-            // })
+                else {
+                    console.log("Please re-take picture.Vehicle number is blurred")
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
     }
 
     render() {
