@@ -5,7 +5,8 @@ export default class AddVehicle extends React.Component {
     constructor() {
         super();
         this.state = {
-            vehicleNo:'fdajf'
+            vehicleNo:'',
+            status: ''
         }
     }
 
@@ -26,11 +27,11 @@ export default class AddVehicle extends React.Component {
             FetchApi('Post', '/api/vehicle/add', data)
                 .then(r => {
                     if(r && r.data && r.data.body) {
-                        console.log("added")
+                        this.setState({status: "Vehicle Added"})
                     }
                 })
                 .catch(err => {
-                    console.log(err,'catch')
+                    this.setState({status: err.msg})
                 })
         }
 
@@ -44,6 +45,7 @@ export default class AddVehicle extends React.Component {
                     <input type="text" name="vehicleNo" onChange={this.onChange} value={this.state.vehicleNo}/>
                     <input type="submit" />
                 </form>
+                {this.state.status}
             </div>
         );
         }
